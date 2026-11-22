@@ -1,15 +1,15 @@
-# 深巷有喵的「Clash」上游同步规则
-# 版本：1.4.2
-# 日期：2026.11.16
-# 作者：https://github.com/Rabbit-Spec/Clash
+# 阿涛Atao的「Clash」上游同步规则
+# 版本：1.0
+# 日期：2026.11.21
+# 作者：https://github.com/VeryAtao/Clash
 
 name: Auto-Clash-Rules
 
 # 触发器配置
 on:
   schedule:
-    # 定时任务：北京时间每天 06:00 执行
-    - cron: '0 22 * * *'
+    # 定时任务：北京时间每天 06:17 执行
+    - cron: '17 22 * * *'
   # 允许手动触发
   workflow_dispatch:
 
@@ -93,8 +93,8 @@ jobs:
             # E. 构造最终 YAML 文件 (Header + payload + awk 毫秒级流式缩进)
             {
               echo "# NAME: $display_name"
-              echo "# AUTHOR: Rabbit-Spec"
-              echo "# REPO: https://github.com/Rabbit-Spec/Clash"
+              echo "# AUTHOR: VeryAtao"
+              echo "# REPO: https://github.com/VeryAtao/Clash"
               echo "# UPDATED: $UPDATE_TIME"
               echo "# TOTAL: $rule_count"
               echo ""
@@ -116,69 +116,69 @@ jobs:
           # --- 第一部分：常规规则同步 ---
           # Loyalsoldier 仓库
           URL_PROXY="https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt"
-          process_rule "$URL_PROXY" "ChinaCIDR.yaml" "深巷有喵的「ChinaCIDR」规则"
+          process_rule "$URL_PROXY" "ChinaCIDR.yaml" " 阿涛Atao的「ChinaCIDR」规则"
 
           URL_PROXY="https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
-          process_rule "$URL_PROXY" "China.yaml" "深巷有喵的「China」规则"
+          process_rule "$URL_PROXY" "China.yaml" "阿涛Atao的「China」规则"
 
           # Sukka 仓库
           URL_PROXY="https://ruleset.skk.moe/Clash/ip/telegram.txt"
-          process_rule "$URL_PROXY" "Telegram.yaml" "深巷有喵的「Telegram」规则"
+          process_rule "$URL_PROXY" "Telegram.yaml" "阿涛Atao的「Telegram」规则"
 
           URL_PROXY="https://ruleset.skk.moe/Clash/non_ip/ai.txt"
-          process_rule "$URL_PROXY" "AIGC.yaml" "深巷有喵的「AIGC」规则"
+          process_rule "$URL_PROXY" "AIGC.yaml" "阿涛Atao的「AIGC」规则"
 
           # MagicRule 仓库
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Apple_classical_0fa29647e779e764.yaml"
-          process_rule "$URL_PROXY" "Apple.yaml" "深巷有喵的「Apple」规则"
+          process_rule "$URL_PROXY" "Apple.yaml" "阿涛Atao的「Apple」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Google_classical_fe2edb12daf1b32f.yaml"
-          process_rule "$URL_PROXY" "Google.yaml" "深巷有喵的「Google」规则"
+          process_rule "$URL_PROXY" "Google.yaml" "阿涛Atao的「Google」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Instagram_classical_8f2bea3580d2acf2.yaml"
-          process_rule "$URL_PROXY" "Instagram.yaml" "深巷有喵的「Instagram」规则"
+          process_rule "$URL_PROXY" "Instagram.yaml" "阿涛Atao的「Instagram」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Facebook_classical_041e2b1a05aace8f.yaml"
-          process_rule "$URL_PROXY" "Facebook.yaml" "深巷有喵的「Facebook」规则"
+          process_rule "$URL_PROXY" "Facebook.yaml" "阿涛Atao的「Facebook」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Microsoft_classical_e67099aa280f921f.yaml"
-          process_rule "$URL_PROXY" "Microsoft.yaml" "深巷有喵的「Microsoft」规则"
+          process_rule "$URL_PROXY" "Microsoft.yaml" "阿涛Atao的「Microsoft」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/YouTube_classical_59b6d0fe3b15c19e.yaml"
-          process_rule "$URL_PROXY" "YouTube.yaml" "深巷有喵的「YouTube」规则"
+          process_rule "$URL_PROXY" "YouTube.yaml" "阿涛Atao的「YouTube」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Netflix_classical_c2f68b0a92395ef4.yaml"
-          process_rule "$URL_PROXY" "Netflix.yaml" "深巷有喵的「Netflix」规则"
+          process_rule "$URL_PROXY" "Netflix.yaml" "阿涛Atao的「Netflix」规则"
 
           URL_PROXY="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney_No_Resolve.yaml"
-          process_rule "$URL_PROXY" "Disney.yaml" "深巷有喵的「Disney」规则"
+          process_rule "$URL_PROXY" "Disney.yaml" "阿涛Atao的「Disney」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Spotify_classical_822ce41d873a2ee4.yaml"
-          process_rule "$URL_PROXY" "Spotify.yaml" "深巷有喵的「Spotify」规则"
+          process_rule "$URL_PROXY" "Spotify.yaml" "阿涛Atao的「Spotify」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/TikTok_classical_c510421d706b99d3.yaml"
-          process_rule "$URL_PROXY" "TikTok.yaml" "深巷有喵的「TikTok」规则"
+          process_rule "$URL_PROXY" "TikTok.yaml" "阿涛Atao的「TikTok」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/BiliBili_classical_e094628621c39bfc.yaml"
-          process_rule "$URL_PROXY" "BiliBili.yaml" "深巷有喵的「BiliBili」规则" 
+          process_rule "$URL_PROXY" "BiliBili.yaml" "阿涛Atao的「BiliBili」规则" 
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/ChinaMedia_classical_5eda3320a55c6422.yaml"
-          process_rule "$URL_PROXY" "ChinaMedia.yaml" "深巷有喵的「ChinaMedia」规则" 
+          process_rule "$URL_PROXY" "ChinaMedia.yaml" "阿涛Atao的「ChinaMedia」规则" 
           
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/GlobalMedia_classical_f0880cec2c24ebd6.yaml"
-          process_rule "$URL_PROXY" "GlobalMedia.yaml" "深巷有喵的「GlobalMedia」规则" 
+          process_rule "$URL_PROXY" "GlobalMedia.yaml" "阿涛Atao的「GlobalMedia」规则" 
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/PayPal_classical_3d035a8c84b7c305.yaml"
-          process_rule "$URL_PROXY" "PayPal.yaml" "深巷有喵的「PayPal」规则"
+          process_rule "$URL_PROXY" "PayPal.yaml" "阿涛Atao的「PayPal」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Whatsapp_classical_cd2dafda3f58a9b4.yaml"
-          process_rule "$URL_PROXY" "Whatsapp.yaml" "深巷有喵的「Whatsapp」规则"
+          process_rule "$URL_PROXY" "Whatsapp.yaml" "阿涛Atao的「Whatsapp」规则"
 
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Lan_classical_24817c9e646b9514.yaml"
-          process_rule "$URL_PROXY" "LAN.yaml" "深巷有喵的「LAN」规则"
+          process_rule "$URL_PROXY" "LAN.yaml" "阿涛Atao的「LAN」规则"
           
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/GlobalGame_classical_f8d067b0c35d9641.yaml"
-          process_rule "$URL_PROXY" "Game.yaml" "深巷有喵的「Game」规则"
+          process_rule "$URL_PROXY" "Game.yaml" "阿涛Atao的「Game」规则"
 
           # --- 第二部分：Proxy.yaml 聚合处理 ---
           PROXY_TARGET="Rules/Proxy.yaml"
@@ -223,9 +223,9 @@ jobs:
           proxy_count=$(awk '$0 !~ /^[[:space:]]*#/ && NF' "$proxy_temp" | wc -l)
           
           # E. 写入 Proxy.yaml 最终文件 (按 YAML 格式化输出)
-          echo "# NAME: 深巷有喵的「Proxy」规则" > "$PROXY_TARGET"
-          echo "# AUTHOR: Rabbit-Spec" >> "$PROXY_TARGET"
-          echo "# REPO: https://github.com/Rabbit-Spec/Clash" >> "$PROXY_TARGET"
+          echo "# NAME: 阿涛Atao的「Proxy」规则" > "$PROXY_TARGET"
+          echo "# AUTHOR: VeryAtao" >> "$PROXY_TARGET"
+          echo "# REPO: https://github.com/VeryAtao/Clash" >> "$PROXY_TARGET"
           echo "# UPDATED: $UPDATE_TIME" >> "$PROXY_TARGET"
           echo "# TOTAL: $proxy_count" >> "$PROXY_TARGET"
           echo "" >> "$PROXY_TARGET"
