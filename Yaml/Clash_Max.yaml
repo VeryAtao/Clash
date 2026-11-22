@@ -148,89 +148,89 @@ proxy-groups:
 # 订阅规则
 rule-providers:
 
-  AIGC:
+  AI智能助理:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/AIGC.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
     path: './RuleSet/AIGC.yaml'
 
-  Apple:
+  苹果服务:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Apple.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Apple.yaml'
     path: './RuleSet/Apple.yaml'
 
   Microsoft:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Microsoft.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Microsoft.yaml'
     path: './RuleSet/Microsoft.yaml'
 
-  Telegram:
+  电报消息:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Telegram.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Telegram.yaml'
     path: './RuleSet/Telegram.yaml'
 
   Game:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Game.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Game.yaml'
     path: './RuleSet/Game.yaml'
 
   YouTube:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/YouTube.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/YouTube.yaml'
     path: './RuleSet/YouTube.yaml'
 
   Netflix:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Netflix.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Netflix.yaml'
     path: './RuleSet/Netflix.yaml'
 
   Disney+:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Disney.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Disney.yaml'
     path: './RuleSet/Disney+.yaml'
 
   Spotify:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Spotify.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Spotify.yaml'
     path: './RuleSet/Spotify.yaml'
 
   TikTok:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/TikTok.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/TikTok.yaml'
     path: './RuleSet/TikTok.yaml'
 
   BiliBili:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/BiliBili.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/BiliBili.yaml'
     path: './RuleSet/BiliBili.yaml'
 
   ChinaMedia:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/ChinaMedia.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/ChinaMedia.yaml'
     path: './RuleSet/ChinaMedia.yaml'
 
   GlobalMedia:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/GlobalMedia.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/GlobalMedia.yaml'
     path: './RuleSet/GlobalMedia.yaml'
 
   Proxy:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/Proxy.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Proxy.yaml'
     path: './RuleSet/Proxy.yaml'
 
   China:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/China.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/China.yaml'
     path: './RuleSet/China.yaml'
 
   LAN:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/LAN.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/LAN.yaml'
     path: './RuleSet/LAN.yaml'
 
   ChinaCIDR:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/Rabbit-Spec/Clash/Master/Rules/ChinaCIDR.yaml'
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/ChinaCIDR.yaml'
     path: './RuleSet/ChinaCIDR.yaml'
 
 # 分流规则指向
@@ -238,13 +238,13 @@ rules:
 # > 局域网地址
  - RULE-SET,LAN,DIRECT
 # > 智能助理
- - RULE-SET,AIGC,AIGC
+ - RULE-SET,AI智能助理,AI智能助理
 # > 苹果服务
- - RULE-SET,Apple,Apple
+ - RULE-SET,苹果服务,苹果服务
 # > 微软服务
  - RULE-SET,Microsoft,Microsoft
 # > 社交平台
- - RULE-SET,Telegram,Telegram
+ - RULE-SET,电报消息,电报消息
 # > 游戏平台
  - RULE-SET,Game,Game
 # > 流媒体
