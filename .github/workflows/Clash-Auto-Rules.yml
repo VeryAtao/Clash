@@ -129,6 +129,9 @@ jobs:
           process_rule "$URL_PROXY" "AIGC.yaml" "阿涛Atao的「AIGC」规则"
 
           # MagicRule 仓库
+          URL_PROXY="https://rule2-ze9.pages.dev/data/_shared/artifacts/Apple_APNs_classical_2e90bebf36120c7f.yaml"
+          process_rule "$URL_PROXY" "AppleAPNs.yaml" "阿涛Atao的「AppleAPNs」规则"
+          
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Apple_classical_0fa29647e779e764.yaml"
           process_rule "$URL_PROXY" "Apple.yaml" "阿涛Atao的「Apple」规则"
 
