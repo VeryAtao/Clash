@@ -38,7 +38,8 @@ jobs:
           
           # 获取北京时间
           UPDATE_TIME=$(TZ="Asia/Shanghai" date +"%Y.%m.%d %H:%M:%S")
-          
+          # 记录已经通过上游同步处理的规则，避免重复处理
+             PROCESSED_RULES=()
           # 1. 定义标准处理函数
           process_rule() {
             local source_url=$1
@@ -47,6 +48,7 @@ jobs:
             
             local target_path="Rules/$target_name"
             local filename_no_ext="${target_name%.*}"
+            PROCESSED_RULES+=("$filename_no_ext")
             local manual_file="Rules/Manual/${filename_no_ext}.txt"
             local exclude_file="Rules/Manual/${filename_no_ext}.exclude.txt"
             
@@ -182,7 +184,26 @@ jobs:
           
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/GlobalGame_classical_f8d067b0c35d9641.yaml"
           process_rule "$URL_PROXY" "Game.yaml" "阿涛Atao的「Game」规则"
+          # E. 生成最终 YAML
+  {
+    echo "# NAME: 阿涛Atao的「${rule_name}」规则"
+    echo "# AUTHOR: VeryAtao"
+    echo "# REPO: https://github.com/VeryAtao/Clash"
+    echo "# UPDATED: $UPDATE_TIME"
+    echo "# TOTAL: $rule_count"
+    echo ""
+    echo "payload:"
 
+    awk '{ print "  - " $0 }' "$temp_merge"
+
+  } > "$target_file"
+
+  rm -f "$temp_merge"
+
+  echo "Successfully merged: $manual_file -> $target_file"
+done
+
+# --- 第二部分结束 ---
           # --- 第二部分：Proxy.yaml 聚合处理 ---
           PROXY_TARGET="Rules/Proxy.yaml"
           PROXY_EXCLUDE="Rules/Manual/Proxy.exclude.txt"
