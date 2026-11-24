@@ -257,6 +257,9 @@ rule-providers:
 rules:
 # > 局域网地址
  - RULE-SET,LAN,DIRECT
+ # > Google 服务
+  - RULE-SET,GoogleFCM,GoogleFCM
+  - RULE-SET,谷歌服务,Google
 # > 智能助理
  - RULE-SET,AI智能助理,AI智能助理
 # > 苹果服务
