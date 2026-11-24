@@ -159,12 +159,12 @@ rule-providers:
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
     path: './RuleSet/AIGC.yaml'
     
- iCloud:
+  iCloud:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/iCloud.yaml'
     path: './RuleSet/iCloud.yaml'
     
- PayPal:
+  PayPal:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/PayPal.yaml'
     path: './RuleSet/PayPal.yaml' 
