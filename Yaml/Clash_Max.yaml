@@ -261,7 +261,7 @@ rule-providers:
 # 分流规则指向
 rules:
 # > 局域网地址
- - RULE-SET,LAN,DIRECT
+  - RULE-SET,LAN,DIRECT
  # > Google 服务
   - RULE-SET,GoogleFCM,GoogleFCM
   - RULE-SET,谷歌服务,Google
