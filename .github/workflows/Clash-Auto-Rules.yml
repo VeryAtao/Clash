@@ -174,7 +174,9 @@ jobs:
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/ChinaMedia_classical_5eda3320a55c6422.yaml"
           process_rule "$URL_PROXY" "ChinaMedia.yaml" "阿涛Atao的「ChinaMedia」规则" 
           
-          
+          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Twitter_classical_d405159ccf6c8682.yaml"
+          process_rule "$URL_PROXY" "Twitter.yaml" "阿涛Atao的「Twitter」规则"
+
           URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/GlobalMedia_classical_f0880cec2c24ebd6.yaml"
           process_rule "$URL_PROXY" "GlobalMedia.yaml" "阿涛Atao的「GlobalMedia」规则" 
           
