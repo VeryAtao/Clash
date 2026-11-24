@@ -1,6 +1,6 @@
 # 阿涛Atao的「Clash」上游同步规则
-# 版本：2.0
-# 日期：2026.11.24
+# 版本：2.1
+# 日期：2026.11.25
 # 作者：https://github.com/VeryAtao/Clash
 
 name: Auto-Clash-Rules
@@ -32,107 +32,175 @@ jobs:
       - name: Download, Merge and Filter Rules
         shell: bash
         run: |
-          set -uo pipefail
+          set -euo pipefail
 
           mkdir -p Rules/Manual
 
           UPDATE_TIME=$(TZ="Asia/Shanghai" date +"%Y.%m.%d %H:%M:%S")
 
+          WORK_DIR=$(mktemp -d)
+          trap 'rm -rf "$WORK_DIR"' EXIT
+
           # ==========================================
-          # 通用规则处理函数
+          # 通用规则清洗函数
+          # 保留注释、分类标题和空行
+          # 去除 payload 声明及规则列表前缀
+          # ==========================================
+          normalize_rules() {
+            awk '
+              {
+                sub(/\r$/, "")
+              }
+
+              tolower($0) ~ /^[[:space:]]*payload:[[:space:]]*$/ {
+                next
+              }
+
+              /^[[:space:]]*$/ {
+                print ""
+                next
+              }
+
+              /^[[:space:]]*#/ {
+                print
+                next
+              }
+
+              {
+                sub(/^[[:space:]]*-[[:space:]]*/, "")
+                sub(/^[[:space:]]+/, "")
+                sub(/[[:space:]]+$/, "")
+
+                if (NF) {
+                  print
+                }
+              }
+            ' "$1"
+          }
+
+          # ==========================================
+          # 通用去重函数
+          # 只对规则正文去重
+          # 注释和空行全部保留
+          # ==========================================
+          deduplicate_rules() {
+            awk '
+              /^[[:space:]]*#/ || /^[[:space:]]*$/ {
+                print
+                next
+              }
+
+              !seen[$0]++ {
+                print
+              }
+            ' "$1" > "$2"
+          }
+
+          # ==========================================
+          # 处理排除文件
+          # ==========================================
+          filter_excludes() {
+            local input_file="$1"
+            local exclude_file="$2"
+            local output_file="$3"
+            local valid_excludes="$WORK_DIR/excludes.txt"
+
+            if [ -f "$exclude_file" ] && [ -s "$exclude_file" ]; then
+              normalize_rules "$exclude_file" |
+                awk '
+                  !/^[[:space:]]*#/ && NF {
+                    print
+                  }
+                ' > "$valid_excludes"
+
+              if [ -s "$valid_excludes" ]; then
+                grep -vFf "$valid_excludes" "$input_file" > "$output_file" || true
+              else
+                cp "$input_file" "$output_file"
+              fi
+            else
+              cp "$input_file" "$output_file"
+            fi
+          }
+
+          # ==========================================
+          # 第一部分：常规规则处理函数
+          # Manual/A.txt 自动合并到 Rules/A.yaml
           # ==========================================
           process_rule() {
             local source_url="$1"
             local target_name="$2"
             local display_name="$3"
 
-            local target_path="Rules/$target_name"
             local filename_no_ext="${target_name%.*}"
 
             local manual_file="Rules/Manual/${filename_no_ext}.txt"
             local exclude_file="Rules/Manual/${filename_no_ext}.exclude.txt"
+            local target_path="Rules/$target_name"
 
-            local temp_body
-            local temp_upstream
-            local temp_filtered
+            local temp_body="$WORK_DIR/body_${filename_no_ext}.txt"
+            local temp_manual="$WORK_DIR/manual_${filename_no_ext}.txt"
+            local temp_download="$WORK_DIR/download_${filename_no_ext}.txt"
+            local temp_upstream="$WORK_DIR/upstream_${filename_no_ext}.txt"
+            local temp_filtered="$WORK_DIR/filtered_${filename_no_ext}.txt"
+            local temp_final="$WORK_DIR/final_${filename_no_ext}.txt"
 
-            temp_body=$(mktemp)
-            temp_upstream=$(mktemp)
-            temp_filtered=$(mktemp)
+            : > "$temp_body"
+            : > "$temp_manual"
 
-            # A. 处理手动规则
+            # A. 读取手动维护规则
             if [ -f "$manual_file" ]; then
-              sed 's/\r//g' "$manual_file" |
-              awk '
-                tolower($0) !~ /^[[:space:]]*payload:/ &&
-                $0 !~ /^[[:space:]]*#/ &&
-                NF
-              ' |
-              sed -E "s/^[[:space:]]*-?[[:space:]]*['\"]?//; s/['\"]?[[:space:]]*$//" \
-              > "$temp_body"
+              normalize_rules "$manual_file" > "$temp_manual"
 
-              if [ -s "$temp_body" ]; then
-                sed -i '1i# ======= 手动维护规则 ========' "$temp_body"
+              # 只要有内容，就保留手动维护标记
+              if [ -s "$temp_manual" ]; then
+                echo "# ======= 手动维护规则 ========" >> "$temp_body"
+                cat "$temp_manual" >> "$temp_body"
               fi
             fi
 
             # B. 下载上游规则
             echo "# ======= 上游同步规则 ========" >> "$temp_body"
 
-            if ! curl -fsSL --retry 3 --retry-delay 2 \
-              --connect-timeout 15 --max-time 120 \
-              "$source_url" -o "$temp_upstream"; then
+            if ! curl -fsSL \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 120 \
+              "$source_url" \
+              -o "$temp_download"; then
 
-              echo "::warning::上游下载失败：$source_url"
-
-              rm -f "$temp_body" "$temp_upstream" "$temp_filtered"
+              echo "::error::上游规则下载失败：$source_url"
               return 1
             fi
 
             # C. 清洗上游规则
-            sed 's/\r//g' "$temp_upstream" |
-            awk '
-              tolower($0) !~ /^[[:space:]]*payload:/ &&
-              $0 !~ /^[[:space:]]*#/ &&
-              NF
-            ' |
-            sed -E "s/^[[:space:]]*-?[[:space:]]*['\"]?//; s/['\"]?[[:space:]]*$//" \
-            > "$temp_filtered"
+            normalize_rules "$temp_download" > "$temp_upstream"
 
             # D. 应用排除规则
-            if [ -f "$exclude_file" ] && [ -s "$exclude_file" ]; then
-              local valid_excludes
-              valid_excludes=$(sed 's/\r//g' "$exclude_file" |
-                sed '/^[[:space:]]*#/d; /^[[:space:]]*$/d')
+            filter_excludes \
+              "$temp_upstream" \
+              "$exclude_file" \
+              "$temp_filtered"
 
-              if [ -n "$valid_excludes" ]; then
-                grep -vFf <(printf '%s\n' "$valid_excludes") \
-                  "$temp_filtered" >> "$temp_body" || true
-              else
-                cat "$temp_filtered" >> "$temp_body"
-              fi
-            else
-              cat "$temp_filtered" >> "$temp_body"
-            fi
+            # E. 合并上游规则
+            cat "$temp_filtered" >> "$temp_body"
 
-            # E. 合并去重，保留首次出现顺序
-            awk '
-              /^#/ || /^[[:space:]]*$/ {
-                print
-                next
-              }
-              !seen[$0]++ {
-                print
-              }
-            ' "$temp_body" > "${temp_body}.tmp"
+            # F. 合并去重
+            deduplicate_rules "$temp_body" "$temp_final"
 
-            mv "${temp_body}.tmp" "$temp_body"
-
-            # F. 统计规则数量
+            # G. 统计有效规则数量
             local rule_count
-            rule_count=$(awk '$0 !~ /^[[:space:]]*#/ && NF' "$temp_body" | wc -l)
+            rule_count=$(awk '
+              !/^[[:space:]]*#/ && NF {
+                count++
+              }
+              END {
+                print count+0
+              }
+            ' "$temp_final")
 
-            # G. 生成 YAML
+            # H. 生成最终 YAML
             {
               echo "# NAME: $display_name"
               echo "# AUTHOR: VeryAtao"
@@ -143,27 +211,28 @@ jobs:
               echo "payload:"
 
               awk '
-                /^#/ {
+                /^[[:space:]]*#/ {
                   print "  " $0
                   next
                 }
+
                 /^[[:space:]]*$/ {
+                  print ""
                   next
                 }
+
                 {
                   print "  - " $0
                 }
-              ' "$temp_body"
+              ' "$temp_final"
 
             } > "$target_path"
-
-            rm -f "$temp_body" "$temp_upstream" "$temp_filtered"
 
             echo "完成：$target_path，共 $rule_count 条规则"
           }
 
           # ==========================================
-          # 第一部分：常规规则同步
+          # 第二部分：常规规则同步
           # ==========================================
 
           # Loyalsoldier
@@ -270,34 +339,36 @@ jobs:
             "Game.yaml" "阿涛Atao的「Game」规则"
 
           # ==========================================
-          # 第二部分：Proxy 聚合规则
+          # 第三部分：Proxy 聚合规则
+          # 支持 Manual/Proxy.txt
+          # 保留手动注释、分类标题和空行
           # ==========================================
 
           PROXY_TARGET="Rules/Proxy.yaml"
-          PROXY_EXCLUDE="Rules/Manual/Proxy.exclude.txt"
           PROXY_MANUAL="Rules/Manual/Proxy.txt"
+          PROXY_EXCLUDE="Rules/Manual/Proxy.exclude.txt"
 
-          proxy_temp=$(mktemp)
-          proxy_upstream=$(mktemp)
-          proxy_filtered=$(mktemp)
+          proxy_body="$WORK_DIR/proxy_body.txt"
+          proxy_manual="$WORK_DIR/proxy_manual.txt"
+          proxy_download="$WORK_DIR/proxy_download.txt"
+          proxy_upstream="$WORK_DIR/proxy_upstream.txt"
+          proxy_filtered="$WORK_DIR/proxy_filtered.txt"
+          proxy_final="$WORK_DIR/proxy_final.txt"
 
-          # A. 手动规则
+          : > "$proxy_body"
+          : > "$proxy_manual"
+
+          # A. Proxy 手动规则
           if [ -f "$PROXY_MANUAL" ]; then
-            sed 's/\r//g' "$PROXY_MANUAL" |
-            awk '
-              tolower($0) !~ /^[[:space:]]*payload:/ &&
-              $0 !~ /^[[:space:]]*#/ &&
-              NF
-            ' |
-            sed -E "s/^[[:space:]]*-?[[:space:]]*['\"]?//; s/['\"]?[[:space:]]*$//" \
-            > "$proxy_temp"
+            normalize_rules "$PROXY_MANUAL" > "$proxy_manual"
 
-            if [ -s "$proxy_temp" ]; then
-              sed -i '1i# ======= 手动维护规则 ========' "$proxy_temp"
+            if [ -s "$proxy_manual" ]; then
+              echo "# ======= 手动维护规则 ========" >> "$proxy_body"
+              cat "$proxy_manual" >> "$proxy_body"
             fi
           fi
 
-          # B. 上游规则源
+          # B. Proxy 上游规则源
           PROXY_SUBS=(
             "Telegram|https://ruleset.skk.moe/Clash/non_ip/telegram.txt"
             "Proxy|https://magicrule.pages.dev/data/_shared/artifacts/Global_classical_84d7c926159da35f.yaml"
@@ -307,57 +378,43 @@ jobs:
             name="${sub%%|*}"
             url="${sub#*|}"
 
-            echo "# ======= $name ========" >> "$proxy_temp"
+            echo "# ======= $name ========" >> "$proxy_body"
 
-            : > "$proxy_upstream"
+            if ! curl -fsSL \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 120 \
+              "$url" \
+              -o "$proxy_download"; then
 
-            if ! curl -fsSL --retry 3 --retry-delay 2 \
-              --connect-timeout 15 --max-time 120 \
-              "$url" -o "$proxy_upstream"; then
-
-              echo "::warning::Proxy 上游下载失败：$url"
-              continue
+              echo "::error::Proxy 上游下载失败：$url"
+              exit 1
             fi
 
-            sed 's/\r//g' "$proxy_upstream" |
-            awk '
-              tolower($0) !~ /^[[:space:]]*payload:/ &&
-              $0 !~ /^[[:space:]]*#/ &&
-              NF
-            ' |
-            sed -E "s/^[[:space:]]*-?[[:space:]]*['\"]?//; s/['\"]?[[:space:]]*$//" \
-            > "$proxy_filtered"
+            normalize_rules "$proxy_download" > "$proxy_upstream"
 
-            if [ -f "$PROXY_EXCLUDE" ] && [ -s "$PROXY_EXCLUDE" ]; then
-              valid_excludes=$(sed 's/\r//g' "$PROXY_EXCLUDE" |
-                sed '/^[[:space:]]*#/d; /^[[:space:]]*$/d')
+            # 排除规则只作用于上游
+            filter_excludes \
+              "$proxy_upstream" \
+              "$PROXY_EXCLUDE" \
+              "$proxy_filtered"
 
-              if [ -n "$valid_excludes" ]; then
-                grep -vFf <(printf '%s\n' "$valid_excludes") \
-                  "$proxy_filtered" >> "$proxy_temp" || true
-              else
-                cat "$proxy_filtered" >> "$proxy_temp"
-              fi
-            else
-              cat "$proxy_filtered" >> "$proxy_temp"
-            fi
+            cat "$proxy_filtered" >> "$proxy_body"
           done
 
-          # C. 去重
-          awk '
-            /^#/ || /^[[:space:]]*$/ {
-              print
-              next
-            }
-            !seen[$0]++ {
-              print
-            }
-          ' "$proxy_temp" > "${proxy_temp}.tmp"
+          # C. Proxy 去重
+          deduplicate_rules "$proxy_body" "$proxy_final"
 
-          mv "${proxy_temp}.tmp" "$proxy_temp"
-
-          # D. 统计
-          proxy_count=$(awk '$0 !~ /^[[:space:]]*#/ && NF' "$proxy_temp" | wc -l)
+          # D. Proxy 规则统计
+          proxy_count=$(awk '
+            !/^[[:space:]]*#/ && NF {
+              count++
+            }
+            END {
+              print count+0
+            }
+          ' "$proxy_final")
 
           # E. 生成 Proxy.yaml
           {
@@ -370,25 +427,26 @@ jobs:
             echo "payload:"
 
             awk '
-              /^#/ {
+              /^[[:space:]]*#/ {
                 print "  " $0
                 next
               }
+
               /^[[:space:]]*$/ {
+                print ""
                 next
               }
+
               {
                 print "  - " $0
               }
-            ' "$proxy_temp"
+            ' "$proxy_final"
 
           } > "$PROXY_TARGET"
 
-          rm -f "$proxy_temp" "$proxy_upstream" "$proxy_filtered"
-
           echo "Proxy 规则处理完成，共 $proxy_count 条规则"
 
-      # 步骤 3：提交与推送
+      # 步骤 3：Git 提交与推送
       - name: Commit and Push Changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
