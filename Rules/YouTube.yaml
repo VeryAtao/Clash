@@ -1,23 +1,11 @@
 # NAME: 阿涛Atao的「YouTube」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 190
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: YouTube
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 22:03:06
-  # BEHAVIOR: classical
-  # DOMAIN: 3
-  # DOMAIN-SUFFIX: 180
-  # DOMAIN-KEYWORD: 1
-  # DOMAIN-WILDCARD: 3
-  # IP-CIDR: 2
-  # IP-CIDR6: 1
-
   - 'DOMAIN,youtubei.googleapis.com'
   - 'DOMAIN,yt3.ggpht.com'
   - 'DOMAIN,yt3.googleusercontent.com'

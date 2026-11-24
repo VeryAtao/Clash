@@ -1,24 +1,11 @@
 # NAME: 阿涛Atao的「GlobalMedia」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 1703
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: GlobalMedia
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 20:36:02
-  # BEHAVIOR: classical
-  # DOMAIN: 88
-  # DOMAIN-SUFFIX: 1114
-  # DOMAIN-KEYWORD: 27
-  # DOMAIN-WILDCARD: 7
-  # IP-CIDR: 266
-  # IP-CIDR6: 200
-  # PROCESS-NAME: 3
-
   - 'DOMAIN,44wilhpljf.execute-api.ap-southeast-1.amazonaws.com'
   - 'DOMAIN,ai.google.dev'
   - 'DOMAIN,aistudio.google.com'

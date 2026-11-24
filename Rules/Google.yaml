@@ -1,22 +1,11 @@
 # NAME: 阿涛Atao的「Google」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 1147
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Google
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 19:37:43
-  # BEHAVIOR: classical
-  # DOMAIN: 241
-  # DOMAIN-SUFFIX: 893
-  # DOMAIN-KEYWORD: 6
-  # IP-CIDR: 2
-  # PROCESS-NAME: 5
-
   - 'DOMAIN,2mdn-cn.net'
   - 'DOMAIN,2mdn.net'
   - 'DOMAIN,admob-cn.com'

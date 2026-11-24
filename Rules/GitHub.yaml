@@ -1,20 +1,11 @@
 # NAME: 阿涛Atao的「GitHub」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 74
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: GitHub
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 18:59:12
-  # BEHAVIOR: classical
-  # DOMAIN: 33
-  # DOMAIN-SUFFIX: 40
-  # DOMAIN-KEYWORD: 1
-
   - 'DOMAIN,copilot-proxy.githubusercontent.com'
   - 'DOMAIN,copilot-telemetry-service.githubusercontent.com'
   - 'DOMAIN,copilot-telemetry.githubusercontent.com'

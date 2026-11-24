@@ -1,24 +1,11 @@
 # NAME: 阿涛Atao的「Netflix」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 1620
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Netflix
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 20:32:16
-  # BEHAVIOR: classical
-  # DOMAIN: 1
-  # DOMAIN-SUFFIX: 28
-  # DOMAIN-KEYWORD: 4
-  # DOMAIN-WILDCARD: 1
-  # IP-CIDR: 1386
-  # IP-CIDR6: 199
-  # PROCESS-NAME: 1
-
   - 'DOMAIN,netflix.com.edgesuite.net'
   - 'DOMAIN-SUFFIX,fast.com'
   - 'DOMAIN-SUFFIX,flxvpn.net'

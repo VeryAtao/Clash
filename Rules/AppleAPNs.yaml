@@ -1,23 +1,13 @@
 # NAME: 阿涛Atao的「AppleAPNs」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 12
 
 payload:
   # ======= 手动维护规则 ========
 
   # ======= 上游同步规则 ========
-  # NAME: Apple APNs
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev/
-  # UPDATED: 2026-11-18 22:30:36
-  # BEHAVIOR: classical
-  # DOMAIN-SUFFIX: 2
-  # DOMAIN-KEYWORD: 1
-  # IP-CIDR: 5
-  # IP-CIDR6: 4
-
   - 'DOMAIN-SUFFIX,akadns.net'
   - 'DOMAIN-SUFFIX,push.apple.com'
   - 'DOMAIN-KEYWORD,apple.com.edgekey.net'

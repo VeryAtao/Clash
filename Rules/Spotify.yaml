@@ -1,22 +1,11 @@
 # NAME: 阿涛Atao的「Spotify」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 39
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Spotify
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 21:25:55
-  # BEHAVIOR: classical
-  # DOMAIN: 10
-  # DOMAIN-SUFFIX: 23
-  # DOMAIN-KEYWORD: 4
-  # IP-CIDR: 1
-  # PROCESS-NAME: 1
-
   - 'DOMAIN,adeventtracker.spotify.com'
   - 'DOMAIN,adstudio-assets.scdn.co'
   - 'DOMAIN,audio-ak-spotify-com.akamaized.net'

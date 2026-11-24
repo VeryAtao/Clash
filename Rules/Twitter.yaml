@@ -1,20 +1,11 @@
 # NAME: 阿涛Atao的「Twitter」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 36
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Twitter
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 15:30:50
-  # BEHAVIOR: classical
-  # DOMAIN-SUFFIX: 27
-  # DOMAIN-KEYWORD: 1
-  # IP-CIDR: 8
-
   - 'DOMAIN-SUFFIX,ads-twitter.com'
   - 'DOMAIN-SUFFIX,cms-twdigitalassets.com'
   - 'DOMAIN-SUFFIX,grok.com'

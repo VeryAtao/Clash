@@ -1,22 +1,11 @@
 # NAME: 阿涛Atao的「Microsoft」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 850
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Microsoft
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 20:34:06
-  # BEHAVIOR: classical
-  # DOMAIN: 124
-  # DOMAIN-SUFFIX: 784
-  # DOMAIN-KEYWORD: 4
-  # DOMAIN-WILDCARD: 1
-  # PROCESS-NAME: 2
-
   - 'DOMAIN,az764295.vo.msecnd.net'
   - 'DOMAIN,azure.microsoft.com'
   - 'DOMAIN,azuremarketplace.microsoft.com'

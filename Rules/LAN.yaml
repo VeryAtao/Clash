@@ -1,21 +1,11 @@
 # NAME: 阿涛Atao的「LAN」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 173
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Lan
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 21:05:40
-  # BEHAVIOR: classical
-  # DOMAIN: 17
-  # DOMAIN-SUFFIX: 124
-  # IP-CIDR: 18
-  # IP-CIDR6: 14
-
   - 'DOMAIN,asusrouter.com'
   - 'DOMAIN,aterm.me'
   - 'DOMAIN,console.gl-inet.com'

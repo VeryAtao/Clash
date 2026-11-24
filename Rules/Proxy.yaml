@@ -1,7 +1,7 @@
 # NAME: 阿涛Atao的「Proxy」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 24514
 
 payload:
@@ -21,18 +21,6 @@ payload:
   # BetterDisplay
   - DOMAIN-SUFFIX,betterdisplay.pro
   # ======= Telegram ========
-  #########################################
-  # Sukka's Ruleset - Telegram Domains
-  # Last Updated: 2026-08-05T12:33:04.439Z
-  # Size: 15
-  # License: AGPL 3.0
-  # Homepage: https://ruleset.skk.moe
-  # GitHub: https://github.com/SukkaW/Surge
-  #
-  # This file contains domains used by Telegram Messenger.
-  #
-  # $content-hash-v1$:N5Chi4AVgtC3LLLZlmGjDDDOXFQFBqND031e-y63yX8$
-  #########################################
   - DOMAIN,7h15.ru1353t.1s.m4d3.by.5ukk4w.skk.moe
   - DOMAIN-SUFFIX,t.me
   - DOMAIN-SUFFIX,tx.me
@@ -48,21 +36,7 @@ payload:
   - DOMAIN-SUFFIX,telegram.org
   - DOMAIN-SUFFIX,telegram.space
   - DOMAIN-SUFFIX,cdn-telegram.org
-  ################## EOF ##################
   # ======= Proxy ========
-  # NAME: Global
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-20 23:34:23
-  # BEHAVIOR: classical
-  # DOMAIN: 1918
-  # DOMAIN-SUFFIX: 22368
-  # DOMAIN-KEYWORD: 53
-  # DOMAIN-WILDCARD: 61
-  # IP-CIDR: 80
-  # IP-CIDR6: 4
-  # PROCESS-NAME: 8
-
   - 'DOMAIN,3dna.nationbuilder.com'
   - 'DOMAIN,a-tiles.locationiq.com'
   - 'DOMAIN,a.gawby.com'

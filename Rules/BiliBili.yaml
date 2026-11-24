@@ -1,21 +1,11 @@
 # NAME: 阿涛Atao的「BiliBili」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 127
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: BiliBili
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 17:57:23
-  # BEHAVIOR: classical
-  # DOMAIN: 51
-  # DOMAIN-SUFFIX: 67
-  # IP-CIDR: 7
-  # PROCESS-NAME: 2
-
   - 'DOMAIN,0gr4uqmtt8y41hcjsgrzdrc31.ourdvsss.com'
   - 'DOMAIN,0gr4uqmtt8y41hcjsgrzdrc3s.ourdvsss.com'
   - 'DOMAIN,0gr4uqmtt8y41hcjsgrzdrc3z.ourdvsss.com'

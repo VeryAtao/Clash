@@ -1,20 +1,11 @@
 # NAME: 阿涛Atao的「PayPal」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 247
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: PayPal
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 15:32:07
-  # BEHAVIOR: classical
-  # DOMAIN: 1
-  # DOMAIN-SUFFIX: 245
-  # DOMAIN-KEYWORD: 1
-
   - 'DOMAIN,venmo.s3.amazonaws.com'
   - 'DOMAIN-SUFFIX,account-paypal.info'
   - 'DOMAIN-SUFFIX,account-paypal.net'

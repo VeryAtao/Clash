@@ -1,24 +1,11 @@
 # NAME: 阿涛Atao的「Apple」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 2096
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Apple
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 20:23:14
-  # BEHAVIOR: classical
-  # DOMAIN: 283
-  # DOMAIN-SUFFIX: 1771
-  # DOMAIN-KEYWORD: 5
-  # DOMAIN-WILDCARD: 15
-  # IP-CIDR: 10
-  # IP-CIDR6: 3
-  # PROCESS-NAME: 9
-
   - 'DOMAIN,a1.mzstatic.com'
   - 'DOMAIN,a2.mzstatic.com'
   - 'DOMAIN,a3.mzstatic.com'

@@ -1,21 +1,11 @@
 # NAME: 阿涛Atao的「Whatsapp」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 30
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: Whatsapp
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev
-  # UPDATED: 2026-11-17 15:31:42
-  # BEHAVIOR: classical
-  # DOMAIN: 1
-  # DOMAIN-SUFFIX: 13
-  # DOMAIN-KEYWORD: 1
-  # IP-CIDR: 15
-
   - 'DOMAIN,graph.facebook.com'
   - 'DOMAIN-SUFFIX,bintray.com'
   - 'DOMAIN-SUFFIX,wa.me'

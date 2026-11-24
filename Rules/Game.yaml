@@ -1,19 +1,11 @@
 # NAME: 阿涛Atao的「Game」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:31:56
+# UPDATED: 2026.11.25 00:49:43
 # TOTAL: 883
 
 payload:
   # ======= 上游同步规则 ========
-  # NAME: GlobalGame
-  # AUTHOR: MagicRule
-  # REPO: https://magicrule.pages.dev/
-  # UPDATED: 2026-11-17 19:01:02
-  # BEHAVIOR: classical
-  # DOMAIN: 97
-  # DOMAIN-SUFFIX: 786
-
   - 'DOMAIN,a.ppy.sh'
   - 'DOMAIN,a4e8s8k3.map2.ssl.hwcdn.net'
   - 'DOMAIN,alibaba.cdn.steampipe.steamcontent.com'
