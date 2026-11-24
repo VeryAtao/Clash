@@ -126,7 +126,11 @@ proxy-groups:
   - {name: Proxy, type: select, proxies: [🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Proxy.png'}
   - {name: 苹果服务, type: select, proxies: [DIRECT, Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Apple_Arcade.png'}
   - {name: AI智能助理, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/ChatGPT.png'}
-  - {name: 电报信息, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Telegram.png'}
+  - {name: 谷歌服务, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Google.png'}
+  - {name: PayPal, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/PayPal.png'}
+  - {name: 电报消息, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Telegram.png'}
+  - {name: X(Twitter), type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/twitter.png'}
+  - {name: iCloud, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/iCloud.png'}
   - {name: Netflix, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Netflix.png'}
   - {name: Disney+, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Disney.png'}
   - {name: YouTube, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/YouTube.png'}
@@ -152,6 +156,11 @@ rule-providers:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
     path: './RuleSet/AIGC.yaml'
+    
+  Google:
+    <<: *RuleSet
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
+    path: './RuleSet/AIGC.yaml'  
 
   苹果服务:
     <<: *RuleSet
