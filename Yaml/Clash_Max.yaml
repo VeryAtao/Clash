@@ -140,6 +140,7 @@ proxy-groups:
   - {name: GlobalMedia, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/GlobalMedia.png'}
   - {name: Microsoft, type: select, proxies: [DIRECT, Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Windows.png'}
   - {name: Game, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Game.png'}
+  - {name: Apple推送, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Apple_Arcade.png'}
 
   - {name: 🇭🇰 香港节点, <<: *FallBack, filter: *FilterHK, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-Hong_Kong.png'}
   - {name: 🇨🇳 台湾节点, <<: *FallBack, filter: *FilterTW, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-China.png'}
@@ -156,12 +157,22 @@ rule-providers:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
     path: './RuleSet/AIGC.yaml'
+
+  GoogleFCM:
+    <<: *RuleSet
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/GoogleFCM.yaml'
+    path: './RuleSet/GoogleFCM.yaml'  
     
   Google:
     <<: *RuleSet
-    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
-    path: './RuleSet/AIGC.yaml'  
-
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Google.yaml'
+    path: './RuleSet/Google.yaml' 
+    
+  苹果推送:
+    <<: *RuleSet
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AppleAPNs.yaml'
+    path: './RuleSet/AppleAPNs.yaml'
+    
   苹果服务:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Apple.yaml'
@@ -249,6 +260,7 @@ rules:
 # > 智能助理
  - RULE-SET,AI智能助理,AI智能助理
 # > 苹果服务
+ - RULE-SET,苹果推送,苹果推送
  - RULE-SET,苹果服务,苹果服务
 # > 微软服务
  - RULE-SET,Microsoft,Microsoft
