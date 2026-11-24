@@ -1,12 +1,10 @@
 # NAME: 阿涛Atao的「AppleAPNs」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:09:56
-# TOTAL: 13
+# UPDATED: 2026.11.25 00:16:06
+# TOTAL: 12
 
 payload:
-  # ======= 手动维护规则 ========
-  - aa.com
   # ======= 上游同步规则 ========
   - DOMAIN-SUFFIX,akadns.net
   - DOMAIN-SUFFIX,push.apple.com
