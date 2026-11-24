@@ -168,7 +168,7 @@ rule-providers:
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Google.yaml'
     path: './RuleSet/Google.yaml' 
     
-  苹果推送:
+  Apple推送:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AppleAPNs.yaml'
     path: './RuleSet/AppleAPNs.yaml'
@@ -260,7 +260,7 @@ rules:
 # > 智能助理
  - RULE-SET,AI智能助理,AI智能助理
 # > 苹果服务
- - RULE-SET,苹果推送,苹果推送
+ - RULE-SET,Apple推送,Apple推送
  - RULE-SET,苹果服务,苹果服务
 # > 微软服务
  - RULE-SET,Microsoft,Microsoft
