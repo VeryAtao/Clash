@@ -127,6 +127,7 @@ proxy-groups:
   - {name: 苹果服务, type: select, proxies: [DIRECT, Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Apple_Arcade.png'}
   - {name: AI智能助理, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/ChatGPT.png'}
   - {name: 谷歌服务, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Google.png'}
+  - {name: GoogleFCM, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Google.png'}
   - {name: PayPal, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/PayPal.png'}
   - {name: 电报消息, type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Telegram.png'}
   - {name: X(Twitter), type: select, proxies: [Proxy, 🇭🇰 香港节点,🇨🇳 台湾节点, 🇺🇸 美国节点, 🇯🇵 日本节点, 🇰🇷 韩国节点, 🇸🇬 新加坡节点], icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/twitter.png'}
@@ -145,7 +146,7 @@ proxy-groups:
   - {name: 🇭🇰 香港节点, <<: *FallBack, filter: *FilterHK, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-Hong_Kong.png'}
   - {name: 🇨🇳 台湾节点, <<: *FallBack, filter: *FilterTW, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-China.png'}
   - {name: 🇺🇸 美国节点, <<: *FallBack, filter: *FilterUS, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-United_States.png'}
-  - {name: 🇯🇵 日本节点, <<: *FallBack, filter: *FilterJP, icon: 'hhttps://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-Japan.png'}
+  - {name: 🇯🇵 日本节点, <<: *FallBack, filter: *FilterJP, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-Japan.png'}
   - {name: 🇰🇷 韩国节点, <<: *FallBack, filter: *FilterKR, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-South_Korea.png'}
   - {name: 🇸🇬 新加坡节点, <<: *FallBack, filter: *FilterSG, icon: 'https://raw.githubusercontent.com/VeryAtao/Suger/refs/heads/main/Conf/icon/Country-Singapore.png'}
 
@@ -264,7 +265,7 @@ rules:
   - RULE-SET,LAN,DIRECT
  # > Google 服务
   - RULE-SET,GoogleFCM,GoogleFCM
-  - RULE-SET,谷歌服务,谷歌服务
+  - RULE-SET,Google,谷歌服务
 # > 智能助理
  - RULE-SET,AI智能助理,AI智能助理
 # > 苹果服务
