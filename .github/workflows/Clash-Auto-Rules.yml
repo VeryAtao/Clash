@@ -8,9 +8,8 @@ name: Auto-Clash-Rules
 # 触发器配置
 on:
   schedule:
-    # 定时任务：北京时间每天 06:17 执行
+    # 北京时间每天 06:17 执行
     - cron: '17 22 * * *'
-  # 允许手动触发
   workflow_dispatch:
 
 # 权限配置
@@ -21,7 +20,6 @@ jobs:
   update-rules:
     runs-on: ubuntu-latest
 
-    # 强制所有 JavaScript Actions 使用 Node.js 24
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -30,22 +28,23 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 步骤 2：下载、清洗、合并、去重、统计并归档
+      # 步骤 2：下载、合并、去重及生成规则
       - name: Download, Merge and Filter Rules
         shell: bash
         run: |
           set -euo pipefail
 
-          # 创建输出目录及手动规则存储目录
           mkdir -p Rules/Manual
 
-          # 获取北京时间
           UPDATE_TIME=$(TZ="Asia/Shanghai" date +"%Y.%m.%d %H:%M:%S")
+          WORK_DIR=$(mktemp -d)
+          trap 'rm -rf "$WORK_DIR"' EXIT
 
-          # ==================================================
-          # 函数 1：清洗手动规则
-          # 保留手动文件中的注释、分类标题和空行
-          # ==================================================
+          # ==========================================
+          # 一、手动规则清洗函数
+          # 保留注释、分类标题和空行
+          # 去除 payload 声明及规则列表前缀
+          # ==========================================
           normalize_manual_rules() {
             awk '
               {
@@ -56,33 +55,20 @@ jobs:
                 next
               }
 
-              # 手动注释原样保留
               /^[[:space:]]*#/ {
                 print
                 next
               }
 
-              # 手动空行保留
               /^[[:space:]]*$/ {
                 print ""
                 next
               }
 
               {
-                # 去除 YAML 列表符号
                 sub(/^[[:space:]]*-[[:space:]]*/, "")
-
-                # 清理规则两端空格
                 sub(/^[[:space:]]+/, "")
                 sub(/[[:space:]]+$/, "")
-
-                # 去除规则外围的成对引号
-                if (
-                  (substr($0, 1, 1) == "\"" && substr($0, length($0), 1) == "\"") ||
-                  (substr($0, 1, 1) == sprintf("%c", 39) && substr($0, length($0), 1) == sprintf("%c", 39))
-                ) {
-                  $0 = substr($0, 2, length($0) - 2)
-                }
 
                 if (length($0) > 0) {
                   print
@@ -91,10 +77,11 @@ jobs:
             ' "$1"
           }
 
-          # ==================================================
-          # 函数 2：清洗上游规则
-          # 只保留规则正文，过滤上游注释和空行
-          # ==================================================
+          # ==========================================
+          # 二、上游规则清洗函数
+          # 删除上游注释和空行
+          # 只保留规则正文
+          # ==========================================
           normalize_upstream_rules() {
             awk '
               {
@@ -105,31 +92,18 @@ jobs:
                 next
               }
 
-              # 过滤上游注释
               /^[[:space:]]*#/ {
                 next
               }
 
-              # 过滤上游空行
               /^[[:space:]]*$/ {
                 next
               }
 
               {
-                # 去除 YAML 列表符号
                 sub(/^[[:space:]]*-[[:space:]]*/, "")
-
-                # 清理规则两端空格
                 sub(/^[[:space:]]+/, "")
                 sub(/[[:space:]]+$/, "")
-
-                # 去除规则外围的成对引号
-                if (
-                  (substr($0, 1, 1) == "\"" && substr($0, length($0), 1) == "\"") ||
-                  (substr($0, 1, 1) == sprintf("%c", 39) && substr($0, length($0), 1) == sprintf("%c", 39))
-                ) {
-                  $0 = substr($0, 2, length($0) - 2)
-                }
 
                 if (length($0) > 0) {
                   print
@@ -138,100 +112,125 @@ jobs:
             ' "$1"
           }
 
-          # ==================================================
-          # 函数 3：处理常规规则
-          # ==================================================
-          process_rule() {
-            local source_url=$1
-            local target_name=$2
-            local display_name=$3
-
-            local target_path="Rules/$target_name"
-            local filename_no_ext="${target_name%.*}"
-            local manual_file="Rules/Manual/${filename_no_ext}.txt"
-            local exclude_file="Rules/Manual/${filename_no_ext}.exclude.txt"
-
-            local temp_body
-            local temp_manual
-            local temp_download
-            local temp_upstream
-            local temp_excludes
-
-            temp_body=$(mktemp)
-            temp_manual=$(mktemp)
-            temp_download=$(mktemp)
-            temp_upstream=$(mktemp)
-            temp_excludes=$(mktemp)
-
-            # A. 读取手动规则
-            # 手动规则始终优先，不受 exclude 文件影响
-            if [ -f "$manual_file" ]; then
-              normalize_manual_rules "$manual_file" > "$temp_manual"
-
-              if grep -q '[^[:space:]]' "$temp_manual"; then
-                cat "$temp_manual" >> "$temp_body"
-              fi
-            fi
-
-            # B. 下载上游规则
-            if curl -fsSL "$source_url" -o "$temp_download"; then
-
-              # 只提取上游规则正文
-              normalize_upstream_rules "$temp_download" > "$temp_upstream"
-
-              # C. 处理排除规则
-              if [ -f "$exclude_file" ] && [ -s "$exclude_file" ]; then
-
-                # 排除文件也清理注释、空行和 YAML 列表符号
-                normalize_upstream_rules "$exclude_file" > "$temp_excludes"
-
-                if [ -s "$temp_excludes" ]; then
-                  # 只过滤上游规则，不过滤手动规则
-                  grep -vFf "$temp_excludes" "$temp_upstream" >> "$temp_body" || true
-                else
-                  cat "$temp_upstream" >> "$temp_body"
-                fi
-              else
-                cat "$temp_upstream" >> "$temp_body"
-              fi
-
-            else
-              echo "Warning: Failed to download $source_url"
-            fi
-
-            # D. 合并去重
-            # 注释和空行全部保留
-            # 只对规则正文去重，优先保留手动规则
+          # ==========================================
+          # 三、规则去重函数
+          # 只对规则正文去重
+          # 注释和空行全部保留
+          # ==========================================
+          deduplicate_rules() {
             awk '
-              /^[[:space:]]*#/ {
+              /^[[:space:]]*#/ || /^[[:space:]]*$/ {
                 print
-                next
-              }
-
-              /^[[:space:]]*$/ {
-                print ""
                 next
               }
 
               !seen[$0]++ {
                 print
               }
-            ' "$temp_body" > "${temp_body}.tmp"
+            ' "$1" > "$2"
+          }
 
-            mv "${temp_body}.tmp" "$temp_body"
+          # ==========================================
+          # 四、处理排除文件
+          # 排除规则只作用于上游规则
+          # ==========================================
+          filter_excludes() {
+            local input_file="$1"
+            local exclude_file="$2"
+            local output_file="$3"
+            local valid_excludes="$WORK_DIR/excludes.txt"
 
-            # E. 统计有效规则条数
+            if [ -f "$exclude_file" ] && [ -s "$exclude_file" ]; then
+              normalize_upstream_rules "$exclude_file" > "$valid_excludes"
+
+              if [ -s "$valid_excludes" ]; then
+                grep -vFf "$valid_excludes" "$input_file" > "$output_file" || true
+              else
+                cp "$input_file" "$output_file"
+              fi
+            else
+              cp "$input_file" "$output_file"
+            fi
+          }
+
+          # ==========================================
+          # 五、常规规则处理函数
+          # Manual/A.txt 自动合并到 Rules/A.yaml
+          # 手动规则优先，上游规则在后
+          # ==========================================
+          process_rule() {
+            local source_url="$1"
+            local target_name="$2"
+            local display_name="$3"
+
+            local filename_no_ext="${target_name%.*}"
+            local manual_file="Rules/Manual/${filename_no_ext}.txt"
+            local exclude_file="Rules/Manual/${filename_no_ext}.exclude.txt"
+            local target_path="Rules/$target_name"
+
+            local temp_body="$WORK_DIR/body_${filename_no_ext}.txt"
+            local temp_manual="$WORK_DIR/manual_${filename_no_ext}.txt"
+            local temp_download="$WORK_DIR/download_${filename_no_ext}.txt"
+            local temp_upstream="$WORK_DIR/upstream_${filename_no_ext}.txt"
+            local temp_filtered="$WORK_DIR/filtered_${filename_no_ext}.txt"
+            local temp_final="$WORK_DIR/final_${filename_no_ext}.txt"
+
+            : > "$temp_body"
+            : > "$temp_manual"
+
+            # A. 读取手动维护规则
+            if [ -f "$manual_file" ]; then
+              normalize_manual_rules "$manual_file" > "$temp_manual"
+
+              if [ -s "$temp_manual" ]; then
+                echo "# ======= 手动维护规则 ========" >> "$temp_body"
+                cat "$temp_manual" >> "$temp_body"
+              fi
+            fi
+
+            # B. 下载上游规则
+            if ! curl -fsSL \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 120 \
+              "$source_url" \
+              -o "$temp_download"; then
+
+              echo "::error::上游规则下载失败：$source_url"
+              return 1
+            fi
+
+            # C. 清洗上游规则
+            normalize_upstream_rules "$temp_download" > "$temp_upstream"
+
+            # D. 应用排除规则
+            filter_excludes \
+              "$temp_upstream" \
+              "$exclude_file" \
+              "$temp_filtered"
+
+            # E. 合并上游规则
+            if [ -s "$temp_filtered" ]; then
+              echo "# ======= 上游同步规则 ========" >> "$temp_body"
+              cat "$temp_filtered" >> "$temp_body"
+            fi
+
+            # F. 合并去重
+            deduplicate_rules "$temp_body" "$temp_final"
+
+            # G. 统计有效规则数量
             local rule_count
             rule_count=$(awk '
               !/^[[:space:]]*#/ && NF {
                 count++
               }
               END {
-                print count + 0
+                print count+0
               }
-            ' "$temp_body")
+            ' "$temp_final")
 
-            # F. 构造最终 YAML 文件
+            # H. 生成最终 YAML
             {
               echo "# NAME: $display_name"
               echo "# AUTHOR: VeryAtao"
@@ -255,175 +254,201 @@ jobs:
                 {
                   print "  - " $0
                 }
-              ' "$temp_body"
+              ' "$temp_final"
 
             } > "$target_path"
 
-            rm -f "$temp_body" "$temp_manual" "$temp_download" "$temp_upstream" "$temp_excludes"
-
-            echo "Updated: $target_path ($rule_count rules)"
+            echo "完成：$target_path，共 $rule_count 条规则"
           }
 
-          # ==================================================
-          # 第一部分：常规规则同步
-          # ==================================================
+          # ==========================================
+          # 六、常规规则同步
+          # ==========================================
 
-          # Loyalsoldier 仓库
-          URL_PROXY="https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt"
-          process_rule "$URL_PROXY" "ChinaCIDR.yaml" "阿涛Atao的「ChinaCIDR」规则"
+          # Loyalsoldier
+          process_rule \
+            "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/cncidr.txt" \
+            "ChinaCIDR.yaml" "阿涛Atao的「ChinaCIDR」规则"
 
-          URL_PROXY="https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt"
-          process_rule "$URL_PROXY" "China.yaml" "阿涛Atao的「China」规则"
+          process_rule \
+            "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/direct.txt" \
+            "China.yaml" "阿涛Atao的「China」规则"
 
-          # Sukka 仓库
-          URL_PROXY="https://ruleset.skk.moe/Clash/ip/telegram.txt"
-          process_rule "$URL_PROXY" "Telegram.yaml" "阿涛Atao的「Telegram」规则"
+          # Sukka
+          process_rule \
+            "https://ruleset.skk.moe/Clash/ip/telegram.txt" \
+            "Telegram.yaml" "阿涛Atao的「Telegram」规则"
 
-          URL_PROXY="https://ruleset.skk.moe/Clash/non_ip/ai.txt"
-          process_rule "$URL_PROXY" "AIGC.yaml" "阿涛Atao的「AIGC」规则"
+          process_rule \
+            "https://ruleset.skk.moe/Clash/non_ip/ai.txt" \
+            "AIGC.yaml" "阿涛Atao的「AIGC」规则"
 
-          # MagicRule 仓库
-          URL_PROXY="https://rule2-ze9.pages.dev/data/_shared/artifacts/Apple_APNs_classical_2e90bebf36120c7f.yaml"
-          process_rule "$URL_PROXY" "AppleAPNs.yaml" "阿涛Atao的「AppleAPNs」规则"
+          # MagicRule
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/GoogleFCM_classical_781159f701cc3dbb.yaml" \
+            "GoogleFCM.yaml" "阿涛Atao的「GoogleFCM」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Apple_classical_0fa29647e779e764.yaml"
-          process_rule "$URL_PROXY" "Apple.yaml" "阿涛Atao的「Apple」规则"
+          process_rule \
+            "https://rule2-ze9.pages.dev/data/_shared/artifacts/Apple_APNs_classical_2e90bebf36120c7f.yaml" \
+            "AppleAPNs.yaml" "阿涛Atao的「AppleAPNs」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Google_classical_fe2edb12daf1b32f.yaml"
-          process_rule "$URL_PROXY" "Google.yaml" "阿涛Atao的「Google」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/GitHub_classical_66f5a463ca33f147.yaml" \
+            "GitHub.yaml" "阿涛Atao的「GitHub」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Instagram_classical_8f2bea3580d2acf2.yaml"
-          process_rule "$URL_PROXY" "Instagram.yaml" "阿涛Atao的「Instagram」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Apple_classical_0fa29647e779e764.yaml" \
+            "Apple.yaml" "阿涛Atao的「Apple」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Facebook_classical_041e2b1a05aace8f.yaml"
-          process_rule "$URL_PROXY" "Facebook.yaml" "阿涛Atao的「Facebook」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Google_classical_fe2edb12daf1b32f.yaml" \
+            "Google.yaml" "阿涛Atao的「Google」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Microsoft_classical_e67099aa280f921f.yaml"
-          process_rule "$URL_PROXY" "Microsoft.yaml" "阿涛Atao的「Microsoft」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Instagram_classical_8f2bea3580d2acf2.yaml" \
+            "Instagram.yaml" "阿涛Atao的「Instagram」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/YouTube_classical_59b6d0fe3b15c19e.yaml"
-          process_rule "$URL_PROXY" "YouTube.yaml" "阿涛Atao的「YouTube」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Facebook_classical_041e2b1a05aace8f.yaml" \
+            "Facebook.yaml" "阿涛Atao的「Facebook」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Netflix_classical_c2f68b0a92395ef4.yaml"
-          process_rule "$URL_PROXY" "Netflix.yaml" "阿涛Atao的「Netflix」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Microsoft_classical_e67099aa280f921f.yaml" \
+            "Microsoft.yaml" "阿涛Atao的「Microsoft」规则"
 
-          URL_PROXY="https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney_No_Resolve.yaml"
-          process_rule "$URL_PROXY" "Disney.yaml" "阿涛Atao的「Disney」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/YouTube_classical_59b6d0fe3b15c19e.yaml" \
+            "YouTube.yaml" "阿涛Atao的「YouTube」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Spotify_classical_822ce41d873a2ee4.yaml"
-          process_rule "$URL_PROXY" "Spotify.yaml" "阿涛Atao的「Spotify」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Netflix_classical_c2f68b0a92395ef4.yaml" \
+            "Netflix.yaml" "阿涛Atao的「Netflix」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/TikTok_classical_c510421d706b99d3.yaml"
-          process_rule "$URL_PROXY" "TikTok.yaml" "阿涛Atao的「TikTok」规则"
+          process_rule \
+            "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Clash/Disney/Disney_No_Resolve.yaml" \
+            "Disney.yaml" "阿涛Atao的「Disney」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/BiliBili_classical_e094628621c39bfc.yaml"
-          process_rule "$URL_PROXY" "BiliBili.yaml" "阿涛Atao的「BiliBili」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Spotify_classical_822ce41d873a2ee4.yaml" \
+            "Spotify.yaml" "阿涛Atao的「Spotify」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/ChinaMedia_classical_5eda3320a55c6422.yaml"
-          process_rule "$URL_PROXY" "ChinaMedia.yaml" "阿涛Atao的「ChinaMedia」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/TikTok_classical_c510421d706b99d3.yaml" \
+            "TikTok.yaml" "阿涛Atao的「TikTok」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/GlobalMedia_classical_f0880cec2c24ebd6.yaml"
-          process_rule "$URL_PROXY" "GlobalMedia.yaml" "阿涛Atao的「GlobalMedia」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/BiliBili_classical_e094628621c39bfc.yaml" \
+            "BiliBili.yaml" "阿涛Atao的「BiliBili」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/PayPal_classical_3d035a8c84b7c305.yaml"
-          process_rule "$URL_PROXY" "PayPal.yaml" "阿涛Atao的「PayPal」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/ChinaMedia_classical_5eda3320a55c6422.yaml" \
+            "ChinaMedia.yaml" "阿涛Atao的「ChinaMedia」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Whatsapp_classical_cd2dafda3f58a9b4.yaml"
-          process_rule "$URL_PROXY" "Whatsapp.yaml" "阿涛Atao的「Whatsapp」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Twitter_classical_d405159ccf6c8682.yaml" \
+            "Twitter.yaml" "阿涛Atao的「Twitter」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/Lan_classical_24817c9e646b9514.yaml"
-          process_rule "$URL_PROXY" "LAN.yaml" "阿涛Atao的「LAN」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/GlobalMedia_classical_f0880cec2c24ebd6.yaml" \
+            "GlobalMedia.yaml" "阿涛Atao的「GlobalMedia」规则"
 
-          URL_PROXY="https://magicrule.pages.dev/data/_shared/artifacts/GlobalGame_classical_f8d067b0c35d9641.yaml"
-          process_rule "$URL_PROXY" "Game.yaml" "阿涛Atao的「Game」规则"
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/PayPal_classical_3d035a8c84b7c305.yaml" \
+            "PayPal.yaml" "阿涛Atao的「PayPal」规则"
 
-          # ==================================================
-          # 第二部分：Proxy.yaml 聚合处理
-          # ==================================================
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Whatsapp_classical_cd2dafda3f58a9b4.yaml" \
+            "Whatsapp.yaml" "阿涛Atao的「Whatsapp」规则"
+
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/Lan_classical_24817c9e646b9514.yaml" \
+            "LAN.yaml" "阿涛Atao的「LAN」规则"
+
+          process_rule \
+            "https://magicrule.pages.dev/data/_shared/artifacts/GlobalGame_classical_f8d067b0c35d9641.yaml" \
+            "Game.yaml" "阿涛Atao的「Game」规则"
+
+          # ==========================================
+          # 七、Proxy 聚合规则
+          # 支持 Manual/Proxy.txt
+          # 手动规则优先，保留手动注释和空行
+          # ==========================================
 
           PROXY_TARGET="Rules/Proxy.yaml"
-          PROXY_EXCLUDE="Rules/Manual/Proxy.exclude.txt"
           PROXY_MANUAL="Rules/Manual/Proxy.txt"
+          PROXY_EXCLUDE="Rules/Manual/Proxy.exclude.txt"
 
-          proxy_temp=$(mktemp)
-          proxy_manual_temp=$(mktemp)
-          proxy_exclude_temp=$(mktemp)
+          proxy_body="$WORK_DIR/proxy_body.txt"
+          proxy_manual="$WORK_DIR/proxy_manual.txt"
+          proxy_download="$WORK_DIR/proxy_download.txt"
+          proxy_upstream="$WORK_DIR/proxy_upstream.txt"
+          proxy_filtered="$WORK_DIR/proxy_filtered.txt"
+          proxy_final="$WORK_DIR/proxy_final.txt"
+
+          : > "$proxy_body"
+          : > "$proxy_manual"
 
           # A. Proxy 手动规则
-          # 保留手动注释、分类标题和空行
           if [ -f "$PROXY_MANUAL" ]; then
-            normalize_manual_rules "$PROXY_MANUAL" > "$proxy_manual_temp"
+            normalize_manual_rules "$PROXY_MANUAL" > "$proxy_manual"
 
-            if grep -q '[^[:space:]]' "$proxy_manual_temp"; then
-              cat "$proxy_manual_temp" >> "$proxy_temp"
+            if [ -s "$proxy_manual" ]; then
+              echo "# ======= 手动维护规则 ========" >> "$proxy_body"
+              cat "$proxy_manual" >> "$proxy_body"
             fi
           fi
 
-          # B. Proxy 排除规则
-          if [ -f "$PROXY_EXCLUDE" ] && [ -s "$PROXY_EXCLUDE" ]; then
-            normalize_upstream_rules "$PROXY_EXCLUDE" > "$proxy_exclude_temp"
-          fi
-
-          # C. Proxy 聚合源
+          # B. Proxy 上游规则源
           PROXY_SUBS=(
-            "https://ruleset.skk.moe/Clash/non_ip/telegram.txt"
-            "https://magicrule.pages.dev/data/_shared/artifacts/Global_classical_84d7c926159da35f.yaml"
+            "Telegram|https://ruleset.skk.moe/Clash/non_ip/telegram.txt"
+            "Proxy|https://magicrule.pages.dev/data/_shared/artifacts/Global_classical_84d7c926159da35f.yaml"
           )
 
-          for url in "${PROXY_SUBS[@]}"; do
-            temp_sub_download=$(mktemp)
-            temp_sub=$(mktemp)
+          for sub in "${PROXY_SUBS[@]}"; do
+            name="${sub%%|*}"
+            url="${sub#*|}"
 
-            if curl -fsSL "$url" -o "$temp_sub_download"; then
+            if ! curl -fsSL \
+              --retry 3 \
+              --retry-delay 2 \
+              --connect-timeout 15 \
+              --max-time 120 \
+              "$url" \
+              -o "$proxy_download"; then
 
-              # 只保留上游规则正文
-              normalize_upstream_rules "$temp_sub_download" > "$temp_sub"
-
-              # 排除规则只作用于上游内容
-              if [ -s "$proxy_exclude_temp" ]; then
-                grep -vFf "$proxy_exclude_temp" "$temp_sub" >> "$proxy_temp" || true
-              else
-                cat "$temp_sub" >> "$proxy_temp"
-              fi
-
-            else
-              echo "Warning: Failed to download $url"
+              echo "::error::Proxy 上游下载失败：$url"
+              exit 1
             fi
 
-            rm -f "$temp_sub_download" "$temp_sub"
+            # 清洗上游规则，过滤上游注释和空行
+            normalize_upstream_rules "$proxy_download" > "$proxy_upstream"
+
+            # 排除规则只作用于上游
+            filter_excludes \
+              "$proxy_upstream" \
+              "$PROXY_EXCLUDE" \
+              "$proxy_filtered"
+
+            if [ -s "$proxy_filtered" ]; then
+              echo "# ======= $name ========" >> "$proxy_body"
+              cat "$proxy_filtered" >> "$proxy_body"
+            fi
           done
 
-          # D. Proxy 合并去重
-          # 保留手动标注，只对规则正文去重
-          awk '
-            /^[[:space:]]*#/ {
-              print
-              next
-            }
+          # C. Proxy 去重
+          deduplicate_rules "$proxy_body" "$proxy_final"
 
-            /^[[:space:]]*$/ {
-              print ""
-              next
-            }
-
-            !seen[$0]++ {
-              print
-            }
-          ' "$proxy_temp" > "${proxy_temp}.tmp"
-
-          mv "${proxy_temp}.tmp" "$proxy_temp"
-
-          # E. 统计 Proxy 规则数
+          # D. Proxy 规则统计
           proxy_count=$(awk '
             !/^[[:space:]]*#/ && NF {
               count++
             }
             END {
-              print count + 0
+              print count+0
             }
-          ' "$proxy_temp")
+          ' "$proxy_final")
 
-          # F. 写入 Proxy.yaml
+          # E. 生成 Proxy.yaml
           {
             echo "# NAME: 阿涛Atao的「Proxy」规则"
             echo "# AUTHOR: VeryAtao"
@@ -447,15 +472,13 @@ jobs:
               {
                 print "  - " $0
               }
-            ' "$proxy_temp"
+            ' "$proxy_final"
 
           } > "$PROXY_TARGET"
 
-          rm -f "$proxy_temp" "$proxy_manual_temp" "$proxy_exclude_temp"
+          echo "Proxy 规则处理完成，共 $proxy_count 条规则"
 
-          echo "Updated: $PROXY_TARGET ($proxy_count rules)"
-
-      # 步骤 3：Git 提交与推送到远程仓库
+      # 步骤 3：Git 提交与推送
       - name: Commit and Push Changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -467,4 +490,6 @@ jobs:
             COMMIT_TIME=$(TZ="Asia/Shanghai" date +"%Y.%m.%d %H:%M:%S")
             git commit -m "$COMMIT_TIME Update"
             git push
+          else
+            echo "规则没有变化，无需提交"
           fi
