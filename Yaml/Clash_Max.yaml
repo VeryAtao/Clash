@@ -161,7 +161,7 @@ rule-providers:
   X(Twitter):
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Twitter.yaml'
-    path: './RuleSet/AIGC.yaml'
+    path: './RuleSet/Twitter.yaml'
 
   GoogleFCM:
     <<: *RuleSet
