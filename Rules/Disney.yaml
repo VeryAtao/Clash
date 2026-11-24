@@ -1,11 +1,18 @@
 # NAME: 阿涛Atao的「Disney」规则
 # AUTHOR: VeryAtao
 # REPO: https://github.com/VeryAtao/Clash
-# UPDATED: 2026.11.25 00:16:06
+# UPDATED: 2026.11.25 00:31:56
 # TOTAL: 174
 
 payload:
   # ======= 上游同步规则 ========
+  # NAME: Disney
+  # AUTHOR: blackmatrix7
+  # REPO: https://github.com/blackmatrix7/ios_rule_script
+  # UPDATED: 2025-07-30 02:08:18
+  # DOMAIN-SUFFIX: 172
+  # PROCESS-NAME: 2
+  # TOTAL: 174
   - DOMAIN-SUFFIX,20thcenturystudios.com.au
   - DOMAIN-SUFFIX,20thcenturystudios.com.br
   - DOMAIN-SUFFIX,20thcenturystudios.jp
