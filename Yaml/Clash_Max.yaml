@@ -158,6 +158,11 @@ rule-providers:
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/AIGC.yaml'
     path: './RuleSet/AIGC.yaml'
 
+  X(Twitter):
+    <<: *RuleSet
+    url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/Twitter.yaml'
+    path: './RuleSet/AIGC.yaml'
+
   GoogleFCM:
     <<: *RuleSet
     url: 'https://raw.githubusercontent.com/VeryAtao/Clash/refs/heads/main/Rules/GoogleFCM.yaml'
@@ -268,6 +273,7 @@ rules:
 # > 微软服务
  - RULE-SET,Microsoft,Microsoft
 # > 社交平台
+ - RULE-SET,X(Twitter),X(Twitter)
  - RULE-SET,电报消息,电报消息
 # > 游戏平台
  - RULE-SET,Game,Game
